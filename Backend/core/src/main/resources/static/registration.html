@@ -247,6 +247,34 @@
             color: #9CB349;
             text-decoration: underline;
         }
+        .toggle-pwd {
+            position: relative;
+        }
+
+        .toggle-pwd input {
+            padding-right: 50px;
+        }
+
+        .toggle-pwd .toggle-btn {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .toggle-pwd .toggle-btn:hover {
+            background: #f0f0f0;
+            color: #444;
+        }
 
         @media (max-width: 600px) {
             .container {
@@ -286,13 +314,12 @@
         <div class="form-row">
             <div class="field-group">
                 <label for="firstName">First Name <span class="required">*</span></label>
-                <input type="text" id="firstName" placeholder="Enter first name" required />
-                <div class="error-msg" id="firstNameError">Please enter your first name.</div>
+                <input type="text" id="firstName" placeholder="Enter first name" />
             </div>
             <div class="field-group">
                 <label for="lastName">Last Name <span class="required">*</span></label>
-                <input type="text" id="lastName" placeholder="Enter last name" required />
-                <div class="error-msg" id="lastNameError">Please enter your last name.</div>
+                <input type="text"  placeholder="Enter last name" required />
+                <div class="error-msg" id="lastNameError">Please enter your First name.</div>
             </div>
         </div>
 
@@ -305,8 +332,11 @@
             </div>
             <div class="field-group">
                 <label for="password">Password <span class="required">*</span></label>
-                <input type="password" id="password" placeholder="Min. 6 characters" required minlength="6" />
-                <div class="error-msg" id="passwordError">Password must be at least 6 characters.</div>
+                <div class="toggle-pwd">
+                <input type="password" id="password" placeholder="6-18" required minlength="6" />
+                <button type="button" class="toggle-btn" id="togglePwdBtn">Show</button>
+                </div>
+                <div class="error-msg" id="passwordError">Password must be at Between 6-18 characters.</div>
             </div>
         </div>
 
@@ -314,13 +344,13 @@
         <div class="form-row">
             <div class="field-group">
                 <label for="age">Age <span class="required">*</span></label>
-                <input type="number" id="age" placeholder="e.g. 20" min="1" max="150" required />
+                <input type="number" id="age" placeholder="e.g. 20" min="-150" max="150" required />
                 <div class="error-msg" id="ageError">Please enter a valid age (1–150).</div>
             </div>
             <div class="field-group">
                 <label for="dob">Date of Birth <span class="required">*</span></label>
                 <input type="date" id="dob" required />
-                <div class="error-msg" id="dobError">Please select your date of birth.</div>
+                <div class="error-msg" id="dobError">Please select your Bate of birth.</div>
             </div>
         </div>
 
@@ -329,8 +359,8 @@
             <label>Gender <span class="required">*</span></label>
             <div class="radio-group">
                 <label><input type="radio" name="gender" value="Male" required /> Male</label>
-                <label><input type="radio" name="gender" value="Female" /> Female</label>
-                <label><input type="radio" name="gender" value="Other" /> Other</label>
+                <label><input type="radio" name="gender1" value="Female" /> Female</label>
+                <label><input type="radio" name="gender2" value="Other" /> Other</label>
             </div>
             <div class="error-msg" id="genderError">Please select your gender.</div>
         </div>
@@ -346,7 +376,7 @@
                 <label><input type="checkbox" name="skills" value="Java" /> Java</label>
                 <label><input type="checkbox" name="skills" value="SQL" /> SQL</label>
                 <label><input type="checkbox" name="skills" value="React" /> React</label>
-                <label><input type="checkbox" name="skills" value="Node.js" /> Node.js</label>
+                <label><input type="radio" name="skills" value="Node.js" /> Node.js</label>
             </div>
         </div>
 
@@ -380,13 +410,13 @@
         <!-- Comments -->
         <div class="field-group">
             <label for="comments">Comments</label>
-            <textarea id="comments" rows="4" placeholder="Any additional comments…"></textarea>
+            <textarea rows="4" placeholder="Any additional comments…"></textarea>
         </div>
 
         <!-- Upload Document -->
         <div class="field-group">
             <label for="document">Upload Document</label>
-            <input type="file" id="document" accept=".pdf,.doc,.docx,.jpg,.png,.txt" />
+            <input type="file" name="document" accept=".pdf,.doc,.docx,.jpg,.png,.txt" />
         </div>
 
         <!-- Register Button -->
@@ -401,7 +431,13 @@
 
 <script>
     const form = document.getElementById('registrationForm');
-
+    const toggleBtn = document.getElementById('togglePwdBtn');
+    const passwordField =document.getElementById('firstName');
+    toggleBtn.addEventListener('click', function () {
+        const isPassword = passwordField.type === 'password';
+        passwordField.type = isPassword ? 'text' : 'password';
+        toggleBtn.textContent = isPassword ? 'Hide' : 'Show';
+    });
     // Helper to show / hide error for a given field and its error element
     function setError(fieldId, errorId, condition) {
         const field = document.getElementById(fieldId);
@@ -421,7 +457,7 @@
 
         // --- First Name ---
         const firstName = document.getElementById('firstName').value.trim();
-        setError('firstName', 'firstNameError', firstName === '');
+        // setError('firstName', 'firstNameError', firstName === '');
 
         // --- Last Name ---
         const lastName = document.getElementById('lastName').value.trim();
@@ -429,8 +465,6 @@
 
         // --- Email ---
         const email = document.getElementById('email').value.trim();
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        setError('email', 'emailError', !emailRegex.test(email));
 
         // --- Password ---
         const password = document.getElementById('password').value;
@@ -487,10 +521,7 @@
                 skills: skillsList.join(","),
                 country,
                 phone,
-                comments: document.getElementById('comments').value.trim(),
-                documentName: document.getElementById('document').files[0]
-                    ? document.getElementById('document').files[0].name
-                    : 'None'
+                comments: document.getElementById('comments').value.trim()
             };
 
             fetch("/api/users/register", {
